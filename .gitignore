@@ -1,0 +1,25 @@
+# Virtual environments
+.venv/
+env/
+venv/
+.env
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.mypy_cache/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
