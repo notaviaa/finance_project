@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
-
-class MPT:
-    def init(self, port: pd.DataFrame):
-        self.port = port
-
+import sys
 
 def mpt_sim(p:pd.DataFrame, sims: int):
     mu_m, var_m, tickers = mpt_vectorize(p)
@@ -12,18 +8,16 @@ def mpt_sim(p:pd.DataFrame, sims: int):
     simulations = []
 
     for i in range(sims):
-        print(f"Simulation: {i+1}/{sims}")
         sim = mpt_simulate(mu_m, var_m, tickers)
         row = {
             'Return': sim['return'],
             'Volatility': sim['volatility'],
+            'Weight': sim['weights'],
         }
-        row.update({ticker: sim['weights'][ticker] for ticker in tickers})
         simulations.append(row)
-    
-    columns = ['Return', 'Volatility'] + tickers
-    final = pd.DataFrame(simulations, columns=columns)
-    return final
+
+    final = pd.DataFrame(simulations, columns=['Return', 'Volatility', 'Weight'])
+    return final.sort_values(['Return', 'Volatility'], ascending=[False, True])
 
 
 def mpt_vectorize(p:pd.DataFrame):
@@ -50,9 +44,10 @@ def mpt_vectorize(p:pd.DataFrame):
 
 def mpt_sigma(p:pd.DataFrame):
     p['time'] = pd.to_datetime(p['time'])
+
     R_df = (p.dropna(subset=['ret']))
     R_df = R_df.pivot(index='time', columns='ticker', values='ret')
-    R_df = R_df.sort_index()
+    R_df = (R_df.dropna()).sort_index()
     print(R_df.columns) 
     r = np.cov(R_df, rowvar=False, ddof=1)
     tickers = list(R_df.columns)
@@ -74,9 +69,9 @@ def mpt_simulate(mu_m: np.array, var_m: np.array, tickers):
     portfolio_return = float(np.dot(w, mu_m))
     portfolio_variance = float(w @ var_m @ w)
     portfolio_volatility = float(np.sqrt(portfolio_variance))
-    print("Return:", portfolio_return, "Volatility:", portfolio_volatility)
+
     return {
         'return': portfolio_return,
         'volatility': portfolio_volatility,
-        'weights': weights,
+        f'weights': dict(weights),
     }

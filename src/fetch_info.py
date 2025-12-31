@@ -9,17 +9,21 @@ FETCH_INFO
 
 '''
 
-def fetch_stock(tickers: Iterable[str], hist: int, end_date: Optional[str] = None, combine: Optional[bool] = False):
+def fetch_stock(tickers: Iterable[str], interval: str, hist: int, end_date: Optional[str] = None, combine: Optional[bool] = False):
     '''
-    Docstring for fetch_stock:
-    :param ticker: Takes in an array/iterable of tickers (array will suffice)
-    :type ticker: Iterable str
-    :param hist: Takes in an int number of days to get for historical
+    Docstring for fetch_stock
+    Use to grab an array of tickers from the Vietnamese stock market via the vnstock library, ensure consistency in timeframe. Can output to a single dataframe for correlation analysis
+
+    :param tickers: Takes in an array of tickers, as string
+    :type tickers: Iterable[str]
+    :param interval: Takes in a string followed vnstock Quote object ('1m', '5m', '1d', ...)
+    :type interval: str
+    :param hist: No. of historical date
     :type hist: int
-    :end_date: Optional, takes in a datetime string in isoformat [YYYY-MM-DD], default is today
-    :type end_date: str
-    :param combine: Optional, whether to output as 1 consolidated dataframe or multiple dataframe object. Default is False
-    :type combine: Boolean
+    :param end_date: The end date of the observations
+    :type end_date: Optional[str]
+    :param combine: Combine to a single dataframe with tickers, else will output as an array of individual ticker dataframe
+    :type combine: Optional[bool]
     '''
 
     #  Handle Date
@@ -35,7 +39,7 @@ def fetch_stock(tickers: Iterable[str], hist: int, end_date: Optional[str] = Non
         print(f"Fetching {ticker}...")
         q = Quote(source="VCI", symbol=ticker)
         # Data Validation
-        stock = q.history(start=start_date, end=end_date, interval='1d')
+        stock = q.history(start=start_date, end=end_date, interval=interval)
         stock['time'] = pd.to_datetime(stock['time'])
         
         # Add to holder object
