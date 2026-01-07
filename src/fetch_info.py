@@ -2,6 +2,8 @@ from vnstock import Quote
 from datetime import date, timedelta
 from typing import Iterable, Optional
 import pandas as pd
+import numpy as np
+from time import sleep
 
 '''
 FETCH_INFO
@@ -34,21 +36,30 @@ def fetch_stock(tickers: Iterable[str], interval: str, hist: int, end_date: Opti
 
     # Handle Tickers
     histories = {}
+
     
-    for ticker in tickers:
-        print(f"Fetching {ticker}...")
-        q = Quote(source="VCI", symbol=ticker)
-        # Data Validation
-        stock = q.history(start=start_date, end=end_date, interval=interval)
-        stock['time'] = pd.to_datetime(stock['time'])
-        
-        # Add to holder object
-        histories[ticker] = stock
+    df = []
+    # Split the API call into smaller chunk calls:
+    if len(tickers) > 30:
+        df = np.array_split(tickers, len(tickers) % 30)
+        sleep_val = 10
+    else:
+        df = np.array_split(tickers, 2)
+        sleep_val = 1
+
+    for batch in df:
+        print(f"Processing batch {batch}")
+        sleep(sleep_val)
+        for ticker in batch:
+            q = Quote(source="VCI", symbol=ticker)
+            # Data Validation
+            stock = q.history(start=start_date, end=end_date, interval=interval)
+            stock['time'] = pd.to_datetime(stock['time'])
+            
+            # Add to holder object
+            histories[ticker] = stock
         print("Done!\n")
 
-    # Handle Output
-    if combine == True:
-        return combine_tickers(histories, tickers)
     return histories
 
 
