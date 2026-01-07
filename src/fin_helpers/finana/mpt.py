@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import sys
 
 def mpt_sim(p:pd.DataFrame, sims: int):
     mu_m, var_m, tickers = mpt_vectorize(p)

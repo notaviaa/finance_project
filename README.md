@@ -21,8 +21,26 @@ I've in mind quite a lot of projects/algos that I want to try out, but first, he
 
     [b] Slightly more advance, LLM-assisted algos (to see how far I can push it before any limitations)
 
+## Setup
+Create and activate a virtual environment, then install in editable mode:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+For notebooks, select the same virtual environment/kernel so imports resolve correctly.
+
+Example imports:
+
+```python
+from fin_helpers import fetch_stock, mpt_sim
+from fin_helpers.fetching import fetch_stock
+from fin_helpers.finana import mpt_sim
+```
+
 ## Contacts
 For anything, and anything at all, feel free to contact me through one of the means (as attached below)
 
 [LinkedIn](https://www.linkedin.com/in/huuanhduy-nguyen/) | [Email](andy.duynguyen.work@gmail.com) | 
-

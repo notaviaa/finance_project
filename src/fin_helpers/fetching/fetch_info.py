@@ -38,10 +38,12 @@ def fetch_stock(tickers: Iterable[str], interval: str, hist: int, end_date: Opti
     histories = {}
 
     
+    tickers = list(tickers)
     df = []
     # Split the API call into smaller chunk calls:
     if len(tickers) > 30:
-        df = np.array_split(tickers, len(tickers) % 30)
+        num_batches = int(np.ceil(len(tickers) / 30))
+        df = np.array_split(tickers, num_batches)
         sleep_val = 10
     else:
         df = np.array_split(tickers, 2)
